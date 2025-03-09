@@ -71,9 +71,9 @@ local function autoFarm()
         player.Character:SetPrimaryPartCFrame(workspace.Lobby["Characters Room"].StarterRoom.CharactersStarter.WeakMurder.Box.Display.CFrame)
         task.wait(2)
 
-        -- Summon Nightmare Boss
-        statusLabel.Text = "Summoning Nightmare Boss"
-        fireclickdetector(workspace.Locations.NightmareArea.NightmareSecret.bone.ClickDetector)
+        -- Summon Last Corridor Boss (40 min spawn)
+        statusLabel.Text = "Summoning Last Corridor Boss"
+        fireclickdetector(workspace.Locations.LastCorridor.BadTimeSecret.bone.ClickDetector)
         bossAlive = true
         task.spawn(killBoss)
         
@@ -82,9 +82,9 @@ local function autoFarm()
             task.wait(1)
         until not bossAlive
 
-        -- Summon Last Corridor Boss
-        statusLabel.Text = "Summoning Last Corridor Boss"
-        fireclickdetector(workspace.Locations.LastCorridor.BadTimeSecret.bone.ClickDetector)
+        -- Summon Nightmare Boss (1 hour spawn)
+        statusLabel.Text = "Summoning Nightmare Boss"
+        fireclickdetector(workspace.Locations.NightmareArea.NightmareSecret.bone.ClickDetector)
         bossAlive = true
         task.spawn(killBoss)
         
