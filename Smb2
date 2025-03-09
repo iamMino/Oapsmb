@@ -1,0 +1,105 @@
+local player = game.Players.LocalPlayer
+
+-- UI Setup
+local screenGui = Instance.new("ScreenGui", game.CoreGui)
+local frame = Instance.new("Frame", screenGui)
+frame.Size = UDim2.new(0, 250, 0, 100)
+frame.Position = UDim2.new(0.5, -125, 0.2, 0)
+frame.BackgroundColor3 = Color3.fromRGB(10, 10, 20)
+frame.BorderSizePixel = 2
+frame.Active = true
+frame.Draggable = true
+
+local uiGlow = Instance.new("UIStroke", frame)
+uiGlow.Color = Color3.fromRGB(255, 0, 0)
+uiGlow.Thickness = 3
+
+local button = Instance.new("TextButton", frame)
+button.Size = UDim2.new(1, 0, 0.5, 0)
+button.Text = "ENABLE AUTO FARM"
+button.BackgroundColor3 = Color3.fromRGB(50, 0, 0)
+button.TextColor3 = Color3.fromRGB(255, 50, 50)
+button.Font = Enum.Font.SourceSansBold
+button.TextSize = 18
+
+local statusLabel = Instance.new("TextLabel", frame)
+statusLabel.Size = UDim2.new(1, 0, 0.5, 0)
+statusLabel.Position = UDim2.new(0, 0, 0.5, 0)
+statusLabel.Text = "Status: Idle"
+statusLabel.BackgroundTransparency = 1
+statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+statusLabel.Font = Enum.Font.SourceSansBold
+statusLabel.TextSize = 16
+
+local farming = false
+local bossAlive = false
+
+button.MouseButton1Click:Connect(function()
+    farming = not farming
+    if farming then
+        button.Text = "DISABLE AUTO FARM"
+        button.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
+    else
+        button.Text = "ENABLE AUTO FARM"
+        button.BackgroundColor3 = Color3.fromRGB(50, 0, 0)
+    end
+end)
+
+-- Anti-AFK Script
+local vu = game:GetService("VirtualUser")
+game:GetService("Players").LocalPlayer.Idled:Connect(function()
+    vu:CaptureController()
+    vu:ClickButton2(Vector2.new())
+end)
+
+-- Kill Script Function
+local function killBoss()
+    while bossAlive do
+        for _, obj in pairs(workspace:GetDescendants()) do
+            if obj:IsA("Humanoid") and obj.Parent.Name ~= player.Name then
+                obj.Health = 0
+            end
+        end
+        task.wait(1)
+    end
+end
+
+-- Auto Farm Function
+local function autoFarm()
+    while farming do
+        statusLabel.Text = "Teleporting to Character Box"
+        player.Character:SetPrimaryPartCFrame(workspace.Lobby["Characters Room"].StarterRoom.CharactersStarter.WeakMurder.Box.Display.CFrame)
+        task.wait(2)
+
+        -- Summon Nightmare Boss
+        statusLabel.Text = "Summoning Nightmare Boss"
+        fireclickdetector(workspace.Locations.NightmareArea.NightmareSecret.bone.ClickDetector)
+        bossAlive = true
+        task.spawn(killBoss)
+        
+        -- Wait until boss dies
+        repeat
+            task.wait(1)
+        until not bossAlive
+
+        -- Summon Last Corridor Boss
+        statusLabel.Text = "Summoning Last Corridor Boss"
+        fireclickdetector(workspace.Locations.LastCorridor.BadTimeSecret.bone.ClickDetector)
+        bossAlive = true
+        task.spawn(killBoss)
+        
+        -- Wait until boss dies
+        repeat
+            task.wait(1)
+        until not bossAlive
+    end
+end
+
+task.spawn(function()
+    while true do
+        if farming then
+            autoFarm()
+        end
+        task.wait(2)
+    end
+end)
